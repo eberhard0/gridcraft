@@ -194,6 +194,8 @@ fn candidates(role: &str) -> Vec<(String, u32)> {
     let mac_sup = "/System/Library/Fonts/Supplemental";
     let win = std::env::var("WINDIR").map(|w| format!("{w}\\Fonts")).unwrap_or_else(|_| "C:\\Windows\\Fonts".into());
     let lin = ["/usr/share/fonts/truetype", "/usr/share/fonts", "/usr/local/share/fonts", "/usr/share/fonts/TTF"];
+    // Android's system fonts (Roboto, Noto Serif, Droid Sans Mono); last resort elsewhere.
+    let android = "/system/fonts";
     let mut v: Vec<(String, u32)> = Vec::new();
     let mut add = |s: String, i: u32| v.push((s, i));
     match role {
@@ -207,6 +209,7 @@ fn candidates(role: &str) -> Vec<(String, u32)> {
                 add(format!("{d}/dejavu/DejaVuSans.ttf"), 0);
                 add(format!("{d}/liberation/LiberationSans-Regular.ttf"), 0);
             }
+            add(format!("{android}/Roboto-Regular.ttf"), 0);
         }
         "ui-bold" => {
             add(format!("{mac_sys}/HelveticaNeue.ttc"), 1);
@@ -216,6 +219,7 @@ fn candidates(role: &str) -> Vec<(String, u32)> {
                 add(format!("{d}/dejavu/DejaVuSans-Bold.ttf"), 0);
                 add(format!("{d}/liberation/LiberationSans-Bold.ttf"), 0);
             }
+            add(format!("{android}/Roboto-Bold.ttf"), 0);
         }
         "cell" | "cell-bold" | "cell-italic" | "cell-bold-italic" => {
             let (carlito, calibri_win, calibri_mac, arial_mac, arial_win, lib, dejavu) = match role {
@@ -265,6 +269,13 @@ fn candidates(role: &str) -> Vec<(String, u32)> {
                 add(format!("{d}/liberation/{lib}"), 0);
                 add(format!("{d}/dejavu/{dejavu}"), 0);
             }
+            let roboto = match role {
+                "cell" => "Roboto-Regular.ttf",
+                "cell-bold" => "Roboto-Bold.ttf",
+                "cell-italic" => "Roboto-Italic.ttf",
+                _ => "Roboto-BoldItalic.ttf",
+            };
+            add(format!("{android}/{roboto}"), 0);
         }
         "serif" => {
             add(format!("{mac_sup}/Times New Roman.ttf"), 0);
@@ -273,6 +284,7 @@ fn candidates(role: &str) -> Vec<(String, u32)> {
                 add(format!("{d}/liberation/LiberationSerif-Regular.ttf"), 0);
                 add(format!("{d}/dejavu/DejaVuSerif.ttf"), 0);
             }
+            add(format!("{android}/NotoSerif-Regular.ttf"), 0);
         }
         "mono" => {
             add(format!("{mac_sys}/SFNSMono.ttf"), 0);
@@ -281,6 +293,7 @@ fn candidates(role: &str) -> Vec<(String, u32)> {
             for d in lin {
                 add(format!("{d}/dejavu/DejaVuSansMono.ttf"), 0);
             }
+            add(format!("{android}/DroidSansMono.ttf"), 0);
         }
         _ => {}
     }

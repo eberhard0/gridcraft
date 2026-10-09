@@ -1,0 +1,6 @@
+<resources>
+    <!-- GridCraft green (assets/app-icon/README.md) behind the adaptive icon. -->
+    <color name="ic_launcher_background">#1F9D55</color>
+    <!-- The light theme's window colour (theme::Tokens::light), so the first frame matches. -->
+    <color name="window_background">#F3F3F3</color>
+</resources>
